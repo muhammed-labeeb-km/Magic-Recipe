@@ -1,0 +1,5 @@
+.activeLink {
+  color: gray !important; 
+  font-size: 1.2rem;
+  font-weight: bolder;
+}
