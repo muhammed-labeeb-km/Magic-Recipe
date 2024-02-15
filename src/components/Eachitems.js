@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { Button, Modal } from 'react-bootstrap';
 import { FaHeart, FaComment, FaBookmark } from 'react-icons/fa';
-
+import { useLocation } from 'react-router-dom';
+import SERVER_URL from '../services/serverUrl';
 function Eachitems() {
   const [modalShow, setModalShow] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const location = useLocation();
+  const { recipeDetails } = location.state;
+
+  console.log(recipeDetails);
+
 
   const handleLikeClick = () => {
     setIsLiked(!isLiked);
@@ -20,45 +27,26 @@ function Eachitems() {
     <div>
       <Row>
         <Col className='p-5' lg={4} md={4}>
-          <img src="https://i.postimg.cc/SRxhGmpV/biriyani1.jpg" alt="" width={'100%'} />
+          <img src={`${SERVER_URL}/upload/${recipeDetails.itemPic}`} alt="" width={'100%'} />
           <div className='d-flex justify-content-evenly mt-5'>
-            <FaHeart
-              className={isLiked ? 'text-danger' : 'text-dark'}
-              onClick={handleLikeClick}
-              style={{ cursor: 'pointer' }}
-            />
-            <span>&nbsp;3</span>
             <FaComment onClick={() => setModalShow(true)} className='text-dark' style={{ cursor: 'pointer' }} />
-            <span>&nbsp;3</span>
+            <span>&nbsp;{recipeDetails.itemComment.length}</span>
             <FaBookmark
               className={isBookmarked ? 'text-primary' : 'text-dark'}
               onClick={handleBookmarkClick}
               style={{ cursor: 'pointer' }}
             />
-            <span>&nbsp;3</span>
+            
           </div>
         </Col>
         <Col lg={1} md={1}></Col>
         <Col lg={6} md={6} className='p-5'>
           <div className='text-center fs-1 '>
-            <b>Biriyani</b>
+            <b>{recipeDetails.itemName}</b>
           </div>
           <div className='mt-5'>
             <span className='text-secondary '>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Soluta sit id molestiae rerum ipsum saepe magnam sint natus quam voluptate facere at,
-              <ul>
-                <li>beatae</li>
-                <li>ratione</li>
-                <li>perspiciatis</li>
-                <li> aut</li>
-              </ul>
-              voluptates Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque, aspernatur! Molestiae deserunt accusantium perspiciatis nihil. Exercitationem modi voluptatibus tempora, vitae reprehenderit architecto atque. Nisi autem, minus quasi fuga aliquam nostrum? accusamus accusantium consequuntur.
-              <ul>
-                <li>beatae</li>
-                <li>ratione</li>
-                <li>perspiciatis</li>
-                <li> aut</li>
-              </ul>
+              {recipeDetails.itemDesc}
             </span>
           </div>
         </Col>

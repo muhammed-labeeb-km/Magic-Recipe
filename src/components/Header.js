@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-function Header() {
+function Header({removeName}) {
+
+  const [loginStatus,setLoginStatus] = useState(false)
+  const [nameIs,setNameIs] = useState('')
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -20,8 +24,27 @@ function Header() {
     navigate(targetPath);
   };
 
+  useEffect(()=>{
+    const myName = sessionStorage.getItem("username")
+    setNameIs(myName)
+    const tokenPresent = sessionStorage.getItem("token")
+    if(tokenPresent){
+      setLoginStatus(true)
+    }else{
+      setLoginStatus(false)
+    }
+  },[])
+
   const handleProfile = () =>{
-    navigate('/profile')
+    
+    const tokenPresent = sessionStorage.getItem("token")
+    
+    if(tokenPresent){
+      navigate('/profile')
+    }else{
+      navigate('/login')
+    }
+    
   }
 
 
@@ -42,8 +65,9 @@ function Header() {
             </Nav>
           </Navbar.Collapse>
         </Container>
-        <div className='me-3' >
-        <img onClick={handleProfile} src="https://i.postimg.cc/T1Bzk1TQ/profile-pic.png" height={'50px'} alt="" />
+        <div onClick={handleProfile} className='me-3 d-flex align-items-center' >
+        {removeName ? null : loginStatus && <span className="text-white">{nameIs}</span>}
+        <img  src="https://i.postimg.cc/T1Bzk1TQ/profile-pic.png" height={'50px'} alt="" />
         </div>
       </Navbar>
     </div>

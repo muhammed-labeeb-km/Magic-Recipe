@@ -1,11 +1,29 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Post from '../components/Post'
 import { Row,Col } from 'react-bootstrap'
+import { getAllRecipeDatas } from '../services/allAPI';
 
 function Explore() {
 
-  const postDataArray = [1, 2, 3, 4,5];
+
+  const [allDatas,setAllDatas]= useState([])
+
+  const allDataForExplore = async () =>{
+    try{
+        const result = await getAllRecipeDatas()
+        if(result.status === 200){
+        setAllDatas(result.data)
+        // console.log(result.data);
+    }}
+    catch(err){
+      console.log("error in catch");
+      console.log(err);
+    }
+  }
+  useEffect(()=>{
+    allDataForExplore()
+  },[])
 
   return (
     <div>
@@ -13,8 +31,8 @@ function Explore() {
         <Header></Header>
       </div>
       <Row className='p-5' style={{marginTop:'80px'}} >
-      {postDataArray.map((i,indx)=>(      
-        <Col  key={indx} className='p-3' md={3} lg={4} sm={6} ><Post i={i} /></Col>
+      {allDatas.map((recipeDetails,indx)=>(      
+        <Col  key={indx} className='p-3' md={3} lg={4} sm={6} ><Post recipeDetails={recipeDetails} indx={indx} /></Col>
         ))}
 
 

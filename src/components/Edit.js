@@ -1,61 +1,71 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { updateDesc } from '../services/allAPI';
 
-function Edit() {
-  const [modalShow, setModalShow] = useState(false);
+function Edit({ recipeDetails }) {
+  const [show, setShow] = useState(false);
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const [toDisplay,setToDisplay] = useState(recipeDetails.itemDesc)
+
+  // const [toChange,setTochange] = useState({recipeDetails})
+  // console.log(recipeDetails);
+  const handleSaveChanges = async(e) =>{
+
+    try{
+      const reqBody={
+        _id:recipeDetails._id,
+        toDisplay:toDisplay
+      }
+      const result = await updateDesc(reqBody)
+      if(result.status==200){
+        console.log('Successfully updated Description');
+        window.location.reload();
+      }
+      else {
+        console.log('Failed to update comments:', result.response.data);
+      }
+
+    }catch(err){
+      console.log(err);
+    }
+
+
+  }
+  
+  // console.log(toChange);
+
+ 
   return (
     <div>
-      <i onClick={() => setModalShow(true)} className='fa fa-edit fs-5 text-warning'></i>
+      <i onClick={handleShow} className='fa fa-edit fs-5 text-warning'></i>
 
-      <MyVerticallyCenteredModal
-        show={modalShow}
-        onHide={() => setModalShow(false)}
-      />
+      <Modal show={show} onHide={handleClose} animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>{recipeDetails.itemName}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <textarea
+            className='w-100 form-control'
+            rows={8} // Adjust the number of rows to increase/decrease the height
+            value={toDisplay}
+            onChange={(e) => {setToDisplay(e.target.value)}}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleSaveChanges}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
 
 export default Edit;
-
-function MyVerticallyCenteredModal(props) {
-  const [displayText, setDisplayText] = useState(
-    'Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.'
-  );
-
-  const handleTextareaChange = (e) => {
-    setDisplayText(e.target.value);
-  };
-
-  return (
-    <Modal
-      {...props}
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">Chicken biriyani</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <textarea
-          rows={5} // Adjust the number of rows to increase/decrease the height
-          value={displayText}
-          onChange={handleTextareaChange}
-          className='form-control'
-          placeholder='Enter text...'
-          style={{ resize: 'vertical' }} // Allow vertical resizing
-        />
-      </Modal.Body>
-      <Modal.Footer>
-        <div className='d-flex'>
-          <button onClick={props.onHide} className='me-2 btn-outline-danger btn'>
-            Close
-          </button>
-          <button className='ms-2 btn btn-outline-success'>Save</button>
-        </div>
-      </Modal.Footer>
-    </Modal>
-  );
-}
